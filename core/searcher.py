@@ -138,6 +138,8 @@ class Searcher():
         Returns Bool if movie is found.
         '''
 
+        results = []
+
         # First check predb
         movie = self.sql.get_movie_details('imdbid', imdbid)
         if movie['predb'] != u'found':
@@ -146,20 +148,21 @@ class Searcher():
         if movie['predb'] != u'found':
             return False
 
-        newznab_results = self.nn.search_all(imdbid)
-        torrent_results = self.torrent.search_all(imdbid)
+        for i in self.nn.search_all(imdbid):
+            results.append(i)
+        for i in self.torrent.search_all(imdbid):
+            results.append(i)
+
         old_results = [dict(r) for r in self.sql.get_search_results(imdbid)]
 
         # update nn results with old info if guids match
-        for i, r in enumerate(newznab_results):
-            for o in old_results:
-                if o['guid'] == r['guid']:
-                    r.update(o)
-                    newznab_results[i] = r
+        for idx, result in enumerate(results):
+            for old in old_results:
+                if old['guid'] == result['guid']:
+                    result.update(old)
+                    results[i] = result
 
-        scored_results = self.score.score(newznab_results, imdbid, 'nzb')
-
-        # TODO eventually add search for torrents
+        scored_results = self.score.score(results, imdbid, 'nzb')
 
         # sets result status based off marked results table
         marked_results = self.sql.get_marked_results(imdbid)
