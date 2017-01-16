@@ -2,7 +2,7 @@ import datetime
 import logging
 
 import core
-from core import newznab, scoreresults, snatcher, sqldb, updatestatus
+from core import newznab, scoreresults, snatcher, sqldb, updatestatus, torrent
 from core.rss import predb
 
 logging = logging.getLogger(__name__)
@@ -16,6 +16,7 @@ class Searcher():
         self.sql = sqldb.SQL()
         self.predb = predb.PreDB()
         self.snatcher = snatcher.Snatcher()
+        self.torrent = torrent.TorrentPotato()
         self.update = updatestatus.Status()
 
     # this only runs when scheduled. Only started by the user when changing search settings.
@@ -146,6 +147,7 @@ class Searcher():
             return False
 
         newznab_results = self.nn.search_all(imdbid)
+        torrent_results = self.torrent.search_all(imdbid)
         old_results = [dict(r) for r in self.sql.get_search_results(imdbid)]
 
         # update nn results with old info if guids match
@@ -156,6 +158,7 @@ class Searcher():
                     newznab_results[i] = r
 
         scored_results = self.score.score(newznab_results, imdbid, 'nzb')
+
         # TODO eventually add search for torrents
 
         # sets result status based off marked results table

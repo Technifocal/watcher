@@ -91,7 +91,6 @@ class NewzNab():
 
         Returns dict.
         '''
-        # TODO Should probably have a base dict then fill it in with d.update()
 
         permalink = True
 

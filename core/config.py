@@ -132,6 +132,8 @@ class Config():
         # split Indexers values into lists
         for k, v in d['Indexers'].iteritems():
             d['Indexers'][k] = v.split(',')
+        for k, v in d['TorIndexers'].iteritems():
+            d['TorIndexers'][k] = v.split(',')
 
         # split Quality values into lists
         for k, v in d['Quality'].iteritems():
