@@ -9,7 +9,7 @@ import cherrypy
 import core
 from core import config, poster, searcher, snatcher, sqldb, updatestatus, version
 from core.helpers import Conversions, Comparisons
-from core.downloaders import nzbget, sabnzbd
+from core.downloaders import nzbget, sabnzbd, transmission
 from core.movieinfo import OMDB, TMDB
 from core.notification import Notification
 from core.rss import predb
@@ -295,7 +295,7 @@ class Ajax(object):
         Returns str json.dumps(dict) success/fail message
         '''
 
-        data = self.sql.get_single_search_result('guid', guid)
+        data = dict(self.sql.get_single_search_result('guid', guid))
         if data:
             return json.dumps(self.snatcher.snatch(data))
         else:
@@ -388,6 +388,15 @@ class Ajax(object):
                 response['message'] = test
         if mode == u'nzbget':
             test = nzbget.Nzbget.test_connection(data)
+            if test is True:
+                response['status'] = u'true'
+                response['message'] = u'Connection successful.'
+            else:
+                response['status'] = u'false'
+                response['message'] = test
+
+        if mode == u'transmission':
+            test = transmission.Transmission.test_connection(data)
             if test is True:
                 response['status'] = u'true'
                 response['message'] = u'Connection successful.'
