@@ -38,6 +38,7 @@ class ScoreResults():
 
         title = tableresults['title']
 
+        # get quality settings from database, or config if not found
         if tableresults['quality']:
             quality_dict = json.loads(tableresults['quality'])
             qualities = quality_dict['Quality']
@@ -75,6 +76,11 @@ class ScoreResults():
         Pulls active indexers from config, then removes any
             result that isn't from an active indexer.
 
+        Does not filter Torrent results.
+            Since torrent names don't always match their domain
+            ie demonoid == dnoid.me, we can't filter out disabled torrent
+            indexers since all would be removed
+
         Does not return, modifies self.results
         '''
 
@@ -87,6 +93,8 @@ class ScoreResults():
         for indexer in active:
             for result in self.results:
                 if indexer in result['guid']:
+                    keep.append(result)
+                if result['type'] in ['torrent', 'magnet']:
                     keep.append(result)
 
         self.results = keep
