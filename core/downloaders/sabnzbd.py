@@ -12,7 +12,7 @@ class Sabnzbd():
     @staticmethod
     def test_connection(data):
         ''' Tests connectivity to Sabnzbd
-        :para data: dict of nzbget server information
+        :para data: dict of Sab server information
 
         Tests if we can get Sab's stats using server info in 'data'
 
