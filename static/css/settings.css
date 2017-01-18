@@ -34,12 +34,22 @@ h1{
     display: inline-block;
 }
 
+h2{
+    font-size: 1.35em;
+    padding: 0;
+    margin: .75em 0 .25em 0;
+}
+
+.hidden{
+    display: none;
+}
+
 ul{
     clear: none;
 }
 
 div#content{
-    margin: 1.5em auto 0 auto;
+    margin: 1.5em auto 1.5em auto;
     width: 80%;
     max-width: 1024px;
     clear: both;
@@ -184,15 +194,19 @@ div.hidden_data{
 }
 
 /* downloader */
-ul#downloader{
+
+ul#enabled_source span{
+    margin: 0 2em 0 0;
 
 }
 
-ul#sabnzbd, ul#nzbget{
+ul#usenet, ul#torrent{
+    margin: 0 0 4em 0;
+}
+
+ul#sabnzbd, ul#nzbget, ul#transmission{
     margin: 0 0 1em 2em;
     display: none;
-    width: 100%;
-
 }
 
 span.test_connection{
@@ -285,8 +299,8 @@ span.tip{
     font-weight: 500;
 }
 
-div#footer{
-    position: fixed;
-    bottom: 1em;
-    left: 1em;
+span#save{
+    display: block;
+    margin-top: 3em;
+    cursor: pointer;
 }

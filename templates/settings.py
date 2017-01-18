@@ -24,7 +24,7 @@ def settings_page(page):
         with doc.head:
             meta(name='git_url', content=core.GIT_URL)
             Head.insert()
-            link(rel='stylesheet', href=core.URL_BASE + '/static/css/settings.css')
+            link(rel='stylesheet', href=core.URL_BASE + '/static/css/settings.css?v=01.17')
             link(rel='stylesheet', href=core.URL_BASE + '/static/css/{}/settings.css'.format(core.CONFIG['Server']['theme']))
             script(type='text/javascript', src=core.URL_BASE + '/static/js/settings/main.js?v=01.15')
             script(type='text/javascript', src=core.URL_BASE + '/static/js/settings/save_settings.js?v=01.11')
