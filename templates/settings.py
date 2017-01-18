@@ -260,13 +260,21 @@ class Settings():
     @settings_page
     def downloader(self, c):
         h1(u'Downloader')
-        with ul(id='downloader'):
+        with h2():
+            i(id='usenetenabled', cls='fa fa-square-o checkbox', value=c['Sources']['usenetenabled'], tag='usenet')
+            span('Usenet Downloaders')
+
+        usenet_hidden = None
+        if c['Sources']['usenetenabled'] == 'false':
+            usenet_hidden = 'hidden'
+
+        with ul(id='usenet', cls=usenet_hidden):
             c_s = 'Sabnzbd'
             with li(cls='bbord'):
                 i(id='sabenabled', cls='fa fa-circle-o radio', tog='sabnzbd', value=c[c_s]['sabenabled'])
                 span(u'Sabnzbd', cls='sub_cat')
             # I'm not 100% sure it is valid to do a ul>ul, but it only work this way so deal with it.
-            with ul(id='sabnzbd'):
+            with ul(id='sabnzbd', cls='nzb'):
                 with li(u'Host & Port: ', cls='bbord'):
                     input(type='text', id='sabhost', value=c[c_s]['sabhost'], style='width: 25%')
                     span(u' : ')
@@ -294,7 +302,7 @@ class Settings():
             with li():
                 i(id='nzbgenabled', cls='fa fa-circle-o radio', tog='nzbget', value=c[c_s]['nzbgenabled'])
                 span(u'NZBGet', cls='sub_cat')
-            with ul(id='nzbget'):
+            with ul(id='nzbget', cls='nzb'):
                 with li(u'Host & Port: ', cls='bbord'):
                     input(type='text', id='nzbghost', value=c[c_s]['nzbghost'], style='width: 25%')
                     span(u' : ')
@@ -322,6 +330,49 @@ class Settings():
 
                 with li():
                     with span(cls='test_connection', mode='nzbget'):
+                        i(cls='fa fa-plug')
+                        span(u'Test Connection')
+        with h2():
+            i(id='torrentenabled', cls='fa fa-square-o checkbox', value=c['Sources']['torrentenabled'], tag='torrent')
+            span('Torrent Downloaders')
+
+        torrent_hidden = None
+        if c['Sources']['torrentenabled'] == 'false':
+            torrent_hidden = 'hidden'
+
+        with ul(id='torrent', cls=torrent_hidden):
+            c_s = 'Transmission'
+            with li():
+                i(id='transmissionenabled', cls='fa fa-circle-o radio', tog='transmission', value=c[c_s]['transmissionenabled'])
+                span(u'Transmission', cls='sub_cat')
+            with ul(id='transmission', cls='torrent'):
+                with li(u'Host & Port: ', cls='bbord'):
+                    input(type='text', id='transmissionhost', value=c[c_s]['transmissionhost'], style='width: 25%')
+                    span(u' : ')
+                    input(type='text', id='transmissionport', value=c[c_s]['transmissionport'], style='width: 25%')
+                with li(u'User Name: ', cls='bbord'):
+                    input(type='text', id='transmissionuser', value=c[c_s]['transmissionuser'], style='width: 50%')
+                    span(u'Leave blank for none.', cls='tip')
+                with li(u'Password: ', cls='bbord'):
+                    input(type='text', id='transmissionpass', value=c[c_s]['transmissionpass'], style='width: 50%')
+                    span(u'Leave blank for none.', cls='tip')
+                with li(u'Category: ', cls='bbord'):
+                    input(type='text', id='transmissioncategory', value=c[c_s]['transmissioncategory'], style='width: 50%')
+                    span(u'i.e. \'movies\', \'watcher\'. ', cls='tip')
+                with li(u'Priority: ', cls='bbord'):
+                    with select(id='transmissionpriority', style='width: 50%'):
+                        pl = ['Low', 'Normal', 'High']
+                        for o in pl:
+                            if o == c[c_s]['transmissionpriority']:
+                                option(o, value=o, selected="selected")
+                            else:
+                                option(o, value=o)
+                with li(cls='bbord'):
+                    i(id='transmissionaddpaused', cls='fa fa-square-o checkbox', value=c[c_s]['transmissionaddpaused'])
+                    span(u'Add Paused')
+
+                with li():
+                    with span(cls='test_connection', mode='transmission'):
                         i(cls='fa fa-plug')
                         span(u'Test Connection')
 
