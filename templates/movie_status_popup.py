@@ -140,8 +140,9 @@ class MovieStatusPopup():
                         span(res['score'], cls='bold')
                         span(u' Source: ')
                         span(res['indexer'] or '', cls='bold')
-                        span(u' Published: ')
-                        span(pubdate, cls='bold')
+                        if pubdate:
+                            span(u' Published: ')
+                            span(pubdate, cls='bold')
 
         return unicode(result_list)
 
