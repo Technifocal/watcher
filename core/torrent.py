@@ -26,13 +26,12 @@ class TorrentPotato(object):
         self.imdbid = imdbid
 
         for indexer in indexers:
-            if indexer[3] == u'false':
+            if indexer[2] == u'false':
                 continue
             url = indexer[0]
             if url[-1] == u'/':
                 url = url[:-1]
             passkey = indexer[1]
-            protocol = indexer[2]
 
             search_string = u'{}?passkey={}&t=movie&imdbid={}'.format(url, passkey, imdbid)
             logging.info(u'SEARCHING: {}?passkey=PASSKEY&t=movie&imdbid={}'.format(url, imdbid))
@@ -52,7 +51,7 @@ class TorrentPotato(object):
         if results:
             return self.parse_torrent_potato(results)
         else:
-            return None
+            return []
 
     def parse_torrent_potato(self, results):
         ''' Sorts and correct keys in results.
@@ -65,14 +64,14 @@ class TorrentPotato(object):
         item_keep = ('size', 'category', 'pubdate', 'title', 'indexer', 'info_link', 'guid', 'torrentfile', 'resolution', 'type')
 
         for result in results:
-            result['size'] = result['size'] * 1024
+            result['size'] = result['size'] * 1024 * 1024
             result['category'] = result['type']
             result['pubdate'] = None
             result['title'] = result['release_name']
             result['indexer'] = result['torrent_id'].split('/')[2]
             result['info_link'] = result['details_url']
             if result['download_url'].startswith('magnet'):
-                guid = result['download_url'].split('&')[0]
+                guid = result['download_url']
                 result['guid'] = guid
                 result['type'] = 'magnet'
 
@@ -84,6 +83,10 @@ class TorrentPotato(object):
             for i in result.keys():
                 if i not in item_keep:
                     del result[i]
+
+            result['status'] = u'Available'
+            result['score'] = 0
+            result['downloadid'] = None
 
         return results
 
