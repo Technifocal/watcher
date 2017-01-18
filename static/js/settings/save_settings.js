@@ -239,14 +239,20 @@ $(document).ready(function () {
     }
 
     function downloader(){
-        var data = {}
+        var data = {};
+
+        var sources = {};
+        sources["usenetenabled"] = $("i#usenetenabled").attr("value");
+        sources["torrentenabled"] = $("i#torrentenabled").attr("value");
+        data['Sources'] = sources;
+
         var sabnzbd = {};
         sabnzbd["sabenabled"] = $("i#sabenabled").attr("value");
         $("ul#sabnzbd li input").each(function(){
-            sabnzbd[$(this).attr("id")] = $(this).val()
+            sabnzbd[$(this).attr("id")] = $(this).val();
         });
         $("ul#sabnzbd li select").each(function(){
-            sabnzbd[$(this).attr("id")] = $(this).val()
+            sabnzbd[$(this).attr("id")] = $(this).val();
         });
         data["Sabnzbd"] = sabnzbd;
 
@@ -262,6 +268,19 @@ $(document).ready(function () {
             nzbget[$(this).attr("id")] = $(this).val()
         });
         data["NzbGet"] = nzbget;
+
+        var transmission = {};
+        transmission["transmissionenabled"] = $("i#transmissionenabled").attr("value");
+        $("ul#transmission li i.checkbox").each(function(){
+            transmission[$(this).attr("id")] = $(this).attr("value");
+        });
+        $("ul#transmission li input").not("[type=button]").each(function(){
+            transmission[$(this).attr("id")] = $(this).val();
+        });
+        $("ul#transmission li select").each(function(){
+            transmission[$(this).attr("id")] = $(this).val()
+        });
+        data["Transmission"] = transmission;
 
         return data
     }

@@ -62,6 +62,18 @@ $(document).ready(function () {
         $("ul#newznab_list li:nth-last-child(2)").after(row);
     });
 
+    /* hide disabled download sources */
+    $("h2 i").click(function(){
+        tag = $(this).attr('tag');
+        if($(this).attr('value') == 'true'){
+            $('ul#' + tag).slideUp();
+        } else{
+            $('ul#' + tag).slideDown();
+        }
+
+
+    });
+
 
     /* toggle downloader slide downs */
     $("i.radio").click(function(){
