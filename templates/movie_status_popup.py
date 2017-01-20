@@ -105,6 +105,7 @@ class MovieStatusPopup():
                 li(u'Next automatic search scheduled for: {}'.format(Conversions.human_datetime(core.NEXT_SEARCH)), cls='title')
             else:
                 for idx, res in enumerate(results):
+                    kind = res['type']
                     info_link = res['info_link']
                     title = res['title']
                     guid = res['guid']
@@ -125,6 +126,8 @@ class MovieStatusPopup():
                             i(cls='fa fa-download', id='manual_download', imdbid=imdbid, guid=guid)
                             i(cls='fa fa-ban', id='mark_bad', guid=guid)
                     with li(cls='data ' + bbord):
+                        span(u'Type: ')
+                        span(kind, cls='bold')
                         span(u' Status: ')
                         if status == 'Snatched':
                             span(status, cls='bold snatched')
