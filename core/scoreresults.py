@@ -90,11 +90,11 @@ class ScoreResults():
                 active.append(i[0])
 
         keep = []
-        for indexer in active:
-            for result in self.results:
+        for result in self.results:
+            if result['type'] in ['torrent', 'magnet']:
+                keep.append(result)
+            for indexer in active:
                 if indexer in result['guid']:
-                    keep.append(result)
-                if result['type'] in ['torrent', 'magnet']:
                     keep.append(result)
 
         self.results = keep
