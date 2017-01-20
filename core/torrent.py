@@ -70,14 +70,15 @@ class TorrentPotato(object):
             result['title'] = result['release_name']
             result['indexer'] = result['torrent_id'].split('/')[2]
             result['info_link'] = result['details_url']
-            if result['download_url'].startswith('magnet'):
-                guid = result['download_url']
-                result['guid'] = guid
-                result['type'] = 'magnet'
+            result['torrentfile'] = result['download_url']
 
+            if result['download_url'].startswith('magnet'):
+                result['guid'] = result['download_url'].split('&')[0].split(':')[-1]
+                result['type'] = 'magnet'
             else:
-                result['guid'] = result['torrentfile'] = result['download_url']
+                result['guid'] = result['download_url']
                 result['type'] = 'torrent'
+
             result['resolution'] = self.get_resolution(result)
 
             for i in result.keys():
