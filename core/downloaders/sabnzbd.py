@@ -51,12 +51,6 @@ class Sabnzbd():
 
         sab_conf = core.CONFIG['Sabnzbd']
 
-        con_test = Sabnzbd.test_connection(sab_conf)
-        if not con_test:
-            d = {}
-            d['status'] = con_test
-            return d
-
         host = sab_conf['sabhost']
         port = sab_conf['sabport']
         api = sab_conf['sabapi']

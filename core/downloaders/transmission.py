@@ -1,6 +1,4 @@
-import json
 import logging
-import os
 
 from lib import transmissionrpc
 
@@ -15,8 +13,6 @@ class Transmission(object):
     def test_connection(data):
         ''' Tests connectivity to Transmission
         data: dict of Transmission server information
-
-        Tests if we can get Sab's stats using server info in 'data'
 
         Return True on success or str error message on failure
         '''
@@ -39,7 +35,6 @@ class Transmission(object):
             logging.error(u'Transmission test_connection', exc_info=True)
             return '{}.'.format(e)
 
-    # returns dict {'status': <>, 'nzo_ids': [<>] }
     @staticmethod
     def add_torrent(data):
         ''' Adds torrent or magnet to Transmission
@@ -52,12 +47,6 @@ class Transmission(object):
 
         trans_conf = core.CONFIG['Transmission']
 
-        con_test = Transmission.test_connection(trans_conf)
-        if not con_test:
-            d = {}
-            d['status'] = con_test
-            return d
-
         host = trans_conf['transmissionhost']
         port = trans_conf['transmissionport']
         user = trans_conf['transmissionuser']
@@ -65,7 +54,7 @@ class Transmission(object):
 
         client = transmissionrpc.Client(host, port, user=user, password=password)
 
-        url = data['guid']
+        url = data['torrentfile']
         paused = trans_conf['transmissionaddpaused'] == 'true'
         bandwidthPriority = trans_conf['transmissionpriority']
         category = trans_conf['transmissioncategory']
@@ -94,5 +83,5 @@ class Transmission(object):
             raise
         except Exception, e:
             print e
-            logging.error(u'Transmission test_connection', exc_info=True)
+            logging.error(u'Transmission add_torrent', exc_info=True)
             return {'response': 'false', 'error': str(e)}
