@@ -24,14 +24,14 @@ def settings_page(page):
         with doc.head:
             meta(name='git_url', content=core.GIT_URL)
             Head.insert()
-            link(rel='stylesheet', href=core.URL_BASE + '/static/css/settings.css?v=01.17')
+            link(rel='stylesheet', href=core.URL_BASE + '/static/css/settings.css?v=01.19')
             link(rel='stylesheet', href=core.URL_BASE + '/static/css/{}/settings.css'.format(core.CONFIG['Server']['theme']))
-            script(type='text/javascript', src=core.URL_BASE + '/static/js/settings/main.js?v=01.17')
-            script(type='text/javascript', src=core.URL_BASE + '/static/js/settings/save_settings.js?v=01.17')
+            script(type='text/javascript', src=core.URL_BASE + '/static/js/settings/main.js?v=01.19')
+            script(type='text/javascript', src=core.URL_BASE + '/static/js/settings/save_settings.js?v=01.19')
 
         with doc:
             Header.insert_header(current="settings")
-            with div(id="content"):
+            with div(id="content", cls=page.__name__):
                 page(self, config)
 
         return doc.render()
@@ -118,7 +118,7 @@ class Settings():
                     if core.CURRENT_HASH is not None:
                         a(core.CURRENT_HASH[0:7], href='{}/commits'.format(core.GIT_URL))
 
-        with span(id='save', cat='server'):
+        with div(id='save', cat='server'):
             i(cls='fa fa-save')
             span(u'Save Settings')
 
@@ -173,7 +173,7 @@ class Settings():
                 input(type='text', id='imdbrss', value=c[c_s]['imdbrss'], placeholder="http://rss.imdb.com/list/...", style="width:25em;")
                 span('*Requires restart. Syncs every 6 hours.', cls='tip')
 
-        with span(id='save', cat='search'):
+        with div(id='save', cat='search'):
             i(cls='fa fa-save')
             span(u'Save Settings')
 
@@ -229,7 +229,7 @@ class Settings():
                 input(type='text', id='ignoredwords', value=c[c_s]['ignoredwords'])
                 span(u'Releases with these words are ignored.', cls='tip')
 
-        with span(id='save', cat='quality'):
+        with div(id='save', cat='quality'):
             i(cls='fa fa-save')
             span(u'Save Settings')
 
@@ -237,22 +237,35 @@ class Settings():
     @settings_page
     def providers(self, c):
         h1(u'Indexers')
-        c_s = 'Indexers'
+
         with ul(id='indexers', cls='wide'):
             with li():
+
+                c_s = 'Indexers'
                 with ul(id='newznab_list'):
                     with li(cls='sub_cat'):
                         span(u'NewzNab Indexers')
-
                     for n in c[c_s]:
                         with li(cls='newznab_indexer'):
                             i(cls='newznab_check fa fa-square-o checkbox', value=c[c_s][n][2])
                             input(type='text', cls='newznab_url', value=c[c_s][n][0], placeholder=" http://www.indexer-url.com/")
                             input(type='text', cls='newznab_api', value=c[c_s][n][1], placeholder=" Api Key")
-                    with li(id='add_newznab_row'):
-                        i(cls='fa fa-plus-square', id='add_row')
+                    with li():
+                        i(cls='fa fa-plus-square', id='add_newznab_row')
 
-        with span(id='save', cat='providers'):
+                c_s = 'TorIndexers'
+                with ul(id='torrentpotato_list'):
+                    with li(cls='sub_cat'):
+                        span(u'Torrent Potato Indexers')
+                    for n in c[c_s]:
+                        with li(cls='torrentpotato_indexer'):
+                            i(cls='torrentpotato_check fa fa-square-o checkbox', value=c[c_s][n][2])
+                            input(type='text', cls='torrentpotato_url', value=c[c_s][n][0], placeholder=" http://www.indexer-url.com/")
+                            input(type='text', cls='torrentpotato_api', value=c[c_s][n][1], placeholder=" Api Key")
+                    with li():
+                        i(cls='fa fa-plus-square', id='add_torrentpotato_row')
+
+        with div(id='save', cat='providers'):
             i(cls='fa fa-save')
             span(u'Save Settings')
 
@@ -271,7 +284,7 @@ class Settings():
         with ul(id='usenet', cls=usenet_hidden):
             c_s = 'Sabnzbd'
             with li(cls='bbord'):
-                i(id='sabenabled', cls='fa fa-circle-o radio', tog='sabnzbd', value=c[c_s]['sabenabled'])
+                i(id='sabenabled', cls='fa fa-circle-o radio', name='usenetdownloader', tog='sabnzbd', value=c[c_s]['sabenabled'])
                 span(u'Sabnzbd', cls='sub_cat')
             # I'm not 100% sure it is valid to do a ul>ul, but it only work this way so deal with it.
             with ul(id='sabnzbd', cls='nzb'):
@@ -300,7 +313,7 @@ class Settings():
                         span(u'Test Connection')
             c_s = 'NzbGet'
             with li():
-                i(id='nzbgenabled', cls='fa fa-circle-o radio', tog='nzbget', value=c[c_s]['nzbgenabled'])
+                i(id='nzbgenabled', cls='fa fa-circle-o radio', name='usenetdownloader', tog='nzbget', value=c[c_s]['nzbgenabled'])
                 span(u'NZBGet', cls='sub_cat')
             with ul(id='nzbget', cls='nzb'):
                 with li(u'Host & Port: ', cls='bbord'):
@@ -343,7 +356,7 @@ class Settings():
         with ul(id='torrent', cls=torrent_hidden):
             c_s = 'Transmission'
             with li():
-                i(id='transmissionenabled', cls='fa fa-circle-o radio', tog='transmission', value=c[c_s]['transmissionenabled'])
+                i(id='transmissionenabled', cls='fa fa-circle-o radio', name='torrentdownloader', tog='transmission', value=c[c_s]['transmissionenabled'])
                 span(u'Transmission', cls='sub_cat')
             with ul(id='transmission', cls='torrent'):
                 with li(u'Host & Port: ', cls='bbord'):
@@ -376,7 +389,82 @@ class Settings():
                         i(cls='fa fa-plug')
                         span(u'Test Connection')
 
-        with span(id='save', cat='downloader'):
+            c_s = 'QBittorrent'
+            with li():
+                i(id='qbittorrentenabled', cls='fa fa-circle-o radio', name='torrentdownloader', tog='qbittorrent', value=c[c_s]['qbittorrentenabled'])
+                span(u'QBittorrent', cls='sub_cat')
+            with ul(id='qbittorrent', cls='torrent'):
+                with li(u'Host & Port: ', cls='bbord'):
+                    input(type='text', id='qbittorrenthost', value=c[c_s]['qbittorrenthost'], style='width: 25%')
+                    span(u' : ')
+                    input(type='text', id='qbittorrentport', value=c[c_s]['qbittorrentport'], style='width: 25%')
+                with li(u'User Name: ', cls='bbord'):
+                    input(type='text', id='qbittorrentuser', value=c[c_s]['qbittorrentuser'], style='width: 50%')
+                    span(u'Leave blank for none.', cls='tip')
+                with li(u'Password: ', cls='bbord'):
+                    input(type='text', id='qbittorrentpass', value=c[c_s]['qbittorrentpass'], style='width: 50%')
+                    span(u'Leave blank for none.', cls='tip')
+                with li(u'Category: ', cls='bbord'):
+                    input(type='text', id='qbittorrentcategory', value=c[c_s]['qbittorrentcategory'], style='width: 50%')
+                    span(u'i.e. \'movies\', \'watcher\'. ', cls='tip')
+                with li(u'Priority: ', cls='bbord'):
+                    with select(id='qbittorrentpriority', style='width: 50%'):
+                        pl = ['Low', 'Normal', 'High']
+                        for o in pl:
+                            if o == c[c_s]['qbittorrentpriority']:
+                                option(o, value=o, selected="selected")
+                            else:
+                                option(o, value=o)
+                with li(cls='bbord'):
+                    i(id='qbittorrentaddpaused', cls='fa fa-square-o checkbox', value=c[c_s]['qbittorrentaddpaused'])
+                    span(u'Add Paused')
+
+                with li():
+                    with span(cls='test_connection', mode='qbittorrent'):
+                        i(cls='fa fa-plug')
+                        span(u'Test Connection')
+
+
+            # c_s = 'Deluge'
+            # with li():
+            #     i(id='delugeenabled', cls='fa fa-circle-o radio', name='torrentdownloader', tog='deluge', value=c[c_s]['delugeenabled'])
+            #     span(u'Deluge', cls='sub_cat')
+            # with ul(id='deluge', cls='torrent'):
+            #     with li():
+            #         i(id='delugewebui', cls='fa fa-square-o checkbox', value=c[c_s]['delugewebui'])
+            #         span('Use Web UI instead of daemon.')
+            #
+            #     with li(u'Host & Port: ', cls='bbord'):
+            #         input(type='text', id='delugehost', value=c[c_s]['delugehost'], style='width: 25%', placeholder='http://localhost')
+            #         span(u' : ')
+            #         input(type='text', id='delugeport', value=c[c_s]['delugeport'], style='width: 25%')
+            #     with li(u'User Name: ', cls='bbord'):
+            #         input(type='text', id='delugeuser', value=c[c_s]['delugeuser'], style='width: 50%')
+            #         span(u'Leave blank for none.', cls='tip')
+            #     with li(u'Password: ', cls='bbord'):
+            #         input(type='text', id='delugepass', value=c[c_s]['delugepass'], style='width: 50%')
+            #         span(u'Leave blank for none.', cls='tip')
+            #     with li(u'Category: ', cls='bbord'):
+            #         input(type='text', id='delugecategory', value=c[c_s]['delugecategory'], style='width: 50%')
+            #         span(u'i.e. \'movies\', \'watcher\'. ', cls='tip')
+            #     with li(u'Priority: ', cls='bbord'):
+            #         with select(id='delugepriority', style='width: 50%'):
+            #             pl = ['Low', 'Normal', 'High']
+            #             for o in pl:
+            #                 if o == c[c_s]['delugepriority']:
+            #                     option(o, value=o, selected="selected")
+            #                 else:
+            #                     option(o, value=o)
+            #     with li(cls='bbord'):
+            #         i(id='delugeaddpaused', cls='fa fa-square-o checkbox', value=c[c_s]['delugeaddpaused'])
+            #         span(u'Add Paused')
+            #
+            #     with li():
+            #         with span(cls='test_connection', mode='deluge'):
+            #             i(cls='fa fa-plug')
+            #             span(u'Test Connection')
+
+        with div(id='save', cat='downloader'):
             i(cls='fa fa-save')
             span(u'Save Settings')
 
@@ -425,7 +513,7 @@ class Settings():
             with li(u'Available tags:'):
                 span(u'{title} {year} {resolution} {rated} {imdbid} {videocodec} {audiocodec} {releasegroup} {source}', cls='taglist')
 
-        with span(id='save', cat='postprocessing'):
+        with div(id='save', cat='postprocessing'):
             i(cls='fa fa-save')
             span(u'Save Settings')
 
@@ -489,15 +577,16 @@ class Settings():
             with p():
                 span('Log directory: ', cls='bold')
                 span(os.path.join(core.PROG_PATH, core.LOG_DIR), cls='log_dir')
-            with select(id='log_file'):
-                for opt in options:
-                    option(opt, value=opt)
-            with span(id='view_log'):
-                i(cls='fa fa-file-text-o')
-                span('View log')
-            with span(id='download_log'):
-                i(cls='fa fa-download')
-                span('Download log')
+            with div(id='log_actions'):
+                with select(id='log_file'):
+                    for opt in options:
+                        option(opt, value=opt)
+                with span(id='view_log'):
+                    i(cls='fa fa-file-text-o')
+                    span('View log')
+                with span(id='download_log'):
+                    i(cls='fa fa-download')
+                    span('Download log')
 
             pre(id='log_display')
 

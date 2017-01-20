@@ -3,12 +3,19 @@ from datetime import datetime
 
 import core
 from core import sqldb, updatestatus
-from core.downloaders import nzbget, sabnzbd, transmission
+from core.downloaders import qbittorrent, nzbget, sabnzbd, transmission
 
 logging = logging.getLogger(__name__)
 
 
 class Snatcher():
+    ''' Clarification notes:
+
+    When snatching a torrent, the downloadid should *always* be the torrent hash.
+    When snatching NZBs use the client-supplied download id if possible. If the client
+        does not return a download-id, use None.
+
+    '''
 
     def __init__(self):
         self.sql = sqldb.SQL()
@@ -145,6 +152,26 @@ class Snatcher():
                 if self.update_status_snatched(guid, imdbid):
                     logging.info(u'Successfully sent {} to NZBGet.'.format(title))
                     return {'response': 'true', 'message': 'Sent to Tranmission.'}
+                else:
+                    return {'response': 'false', 'error': 'Could not mark '
+                            'search result as Snatched.'}
+            else:
+                return response
+
+        # If sending to QBittorrent
+        qbit_conf = core.CONFIG['QBittorrent']
+        if qbit_conf['qbittorrentenabled'] == u'true':
+            logging.info(u'Sending {} to QBittorrent'.format(kind))
+            response = qbittorrent.QBittorrent.add_torrent(data)
+
+            if response['response'] is 'true':
+
+                # store downloadid in database
+                self.sql.update('SEARCHRESULTS', 'downloadid', response['downloadid'], guid=guid)
+
+                if self.update_status_snatched(guid, imdbid):
+                    logging.info(u'Successfully sent {} to QBittorrent.'.format(title))
+                    return {'response': 'true', 'message': 'Sent to QBittorrent.'}
                 else:
                     return {'response': 'false', 'error': 'Could not mark '
                             'search result as Snatched.'}

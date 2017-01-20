@@ -9,7 +9,7 @@ import cherrypy
 import core
 from core import config, poster, searcher, snatcher, sqldb, updatestatus, version
 from core.helpers import Conversions, Comparisons
-from core.downloaders import nzbget, sabnzbd, transmission
+from core.downloaders import deluge, nzbget, sabnzbd, transmission, qbittorrent
 from core.movieinfo import OMDB, TMDB
 from core.notification import Notification
 from core.rss import predb
@@ -295,6 +295,8 @@ class Ajax(object):
         Returns str json.dumps(dict) success/fail message
         '''
 
+        # TODO add check for torrent/nzb enabled
+
         data = dict(self.sql.get_single_search_result('guid', guid))
         if data:
             return json.dumps(self.snatcher.snatch(data))
@@ -397,6 +399,28 @@ class Ajax(object):
 
         if mode == u'transmission':
             test = transmission.Transmission.test_connection(data)
+            if test is True:
+                response['status'] = u'true'
+                response['message'] = u'Connection successful.'
+            else:
+                response['status'] = u'false'
+                response['message'] = test
+
+        if mode == u'deluge':
+            if data['delugewebui'] == 'true':
+                print 'WEBUI'
+                test = deluge.DelugeWeb.test_connection(data)
+            else:
+                test = deluge.Deluged.test_connection(data)
+            if test is True:
+                response['status'] = u'true'
+                response['message'] = u'Connection successful.'
+            else:
+                response['status'] = u'false'
+                response['message'] = test
+
+        if mode == u'qbittorrent':
+            test = qbittorrent.QBittorrent.test_connection(data)
             if test is True:
                 response['status'] = u'true'
                 response['message'] = u'Connection successful.'

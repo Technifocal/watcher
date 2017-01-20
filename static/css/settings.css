@@ -109,30 +109,36 @@ div#content ul#providers{
     overflow: hidden;
 }
 
-div#content ul#newznab_list{
+div#content ul#newznab_list,
+div#content ul#torrentpotato_list{
     float: left;
     width: 100%;
 }
+
 
 input#retention{
     width: 4em;
 }
 
-.newznab_check{
+.newznab_check,
+.torrentpotato_check{
     width: 5%;
 }
 
-.newznab_url{
+.newznab_url,
+.torrentpotato_url{
     width: 40%;
     margin: 0 2.5%;
 }
 
-.newznab_api{
+.newznab_api,
+.torrentpotato_api{
     width: 40%;
     margin: 0 2.5%;
 }
 
-li#add_newznab_row{
+i#add_newznab_row,
+i#add_torrentpotato_row{
     margin: 0 0 2em 0;
 }
 
@@ -204,7 +210,7 @@ ul#usenet, ul#torrent{
     margin: 0 0 4em 0;
 }
 
-ul#sabnzbd, ul#nzbget, ul#transmission{
+ul#sabnzbd, ul#nzbget, ul#transmission, ul#deluge, ul#qbittorrent{
     margin: 0 0 1em 2em;
     display: none;
 }
@@ -234,10 +240,6 @@ div.logs i{
     font-size: 1em;
 }
 
-div.logs{
-    display: inline-block;
-}
-
 div.logs .bold{
     font-weight: bold;
 }
@@ -250,12 +252,11 @@ span.log_dir{
     font-family: monospace;
 }
 
-select{
+div#log_actions{
     margin: 0 1.5em 2em 0;
-
 }
 
- span#view_log, span#download_log{
+ select#log_file, span#view_log, span#download_log{
     margin-right: 1.5em;
     cursor: pointer;
 }
@@ -299,8 +300,9 @@ span.tip{
     font-weight: 500;
 }
 
-span#save{
-    display: block;
+div#save{
+    display: inline-block;
     margin-top: 3em;
     cursor: pointer;
+    clear: both;
 }
