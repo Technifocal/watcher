@@ -1,4 +1,5 @@
 import logging
+import json
 import urllib
 import urllib2
 import hashlib
@@ -37,6 +38,8 @@ class QBittorrent(object):
         ''' Adds torrent or magnet to qbittorrent
         data: dict of torrrent/magnet information
 
+        Adds torrents to default/path/<category>
+
         Returns dict {'response': 'true', 'download_id': 'id'}
                      {'response': 'false', 'error': 'exception'}
 
@@ -48,40 +51,29 @@ class QBittorrent(object):
         port = qbit_conf['qbittorrentport']
         base_url = '{}:{}/'.format(host, port)
 
-        post_data = {}
         user = qbit_conf['qbittorrentuser']
         password = qbit_conf['qbittorrentpass']
 
-        print user
-        print password
+        # check cookie validity
+        download_dir = QBittorrent._get_download_dir(base_url)
+
+        if not download_dir:
+            if QBittorrent.login(base_url, user, password) is not True:
+                return {'response': 'false', 'error': 'Incorrect usename or password.'}
+
+        download_dir = QBittorrent._get_download_dir(base_url)
+
+        if not download_dir:
+            return {'response': 'false', 'error': 'Unable to get path information.'}
+        # if we got download_dir we can connect.
+
+        post_data = {}
 
         post_data['urls'] = data['torrentfile']
 
-        if qbit_conf['qbittorrentaddpaused'] == 'true':
-            post_data['state'] = u'pausedDL'
-        # bandwidthPriority = qbit_conf['qbittorrentpriority']
+        post_data['savepath'] = '{}{}'.format(download_dir, qbit_conf['qbittorrentcategory'])
+
         post_data['category'] = qbit_conf['qbittorrentcategory']
-
-        # priority_keys = {
-        #     'Low': '0',
-        #     'Normal': '1',
-        #     'High': '2'
-        # }
-
-        # bandwidthPriority = priority_keys[qbit_conf['qbittorrentpriority']]
-        #
-        # download_dir = None
-        # if category:
-        #     d = client.get_session().__dict__['_fields']['download_dir'][0]
-        #     d_components = d.split('/')
-        #     d_components.append(category)
-        #
-        #     download_dir = '/'.join(d_components)
-
-        if QBittorrent.cookie is None:
-            response = QBittorrent.login(base_url, user, password)
-            if response == u'Fails.':
-                return {'response': 'false', 'error': 'Incorrect usename or password'}
 
         req_url = u'{}command/download'.format(base_url)
         post_data = urllib.urlencode(post_data)
@@ -91,23 +83,25 @@ class QBittorrent(object):
         try:
             urllib2.urlopen(request)  # QBit returns an empty string
             downloadid = QBittorrent._get_hash(data['torrentfile'])
-            QBittorrent.retry = False
-
-            # TODO pause
-
             return {'response': 'true', 'downloadid': downloadid}
         except (SystemExit, KeyboardInterrupt):
             raise
-        except urllib2.HTTPError as err:
-            if QBittorrent.retry is True:
-                QBittorrent.retry = False
-                return {'response': 'false', 'error': str(err)}
-            else:
-                QBittorrent.cookie = None
-                QBittorrent.retry = True
-                return QBittorrent.add_torrent(data)
         except Exception, e:
             logging.error(u'qbittorrent test_connection', exc_info=True)
+            return {'response': 'false', 'error': str(e.reason)}
+
+    @staticmethod
+    def _get_download_dir(base_url):
+        try:
+            url = u'{}query/preferences'.format(base_url)
+            request = urllib2.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            request.add_header('cookie', QBittorrent.cookie)
+            response = json.loads(urllib2.urlopen(request).read())
+            return response['save_path']
+        except urllib2.HTTPError:
+            return False
+        except Exception, e:
+            logging.error(u'qbittorrent get_download_dir', exc_info=True)
             return {'response': 'false', 'error': str(e.reason)}
 
     @staticmethod

@@ -409,23 +409,11 @@ class Settings():
                 with li(u'Category: ', cls='bbord'):
                     input(type='text', id='qbittorrentcategory', value=c[c_s]['qbittorrentcategory'], style='width: 50%')
                     span(u'i.e. \'movies\', \'watcher\'. ', cls='tip')
-                with li(u'Priority: ', cls='bbord'):
-                    with select(id='qbittorrentpriority', style='width: 50%'):
-                        pl = ['Low', 'Normal', 'High']
-                        for o in pl:
-                            if o == c[c_s]['qbittorrentpriority']:
-                                option(o, value=o, selected="selected")
-                            else:
-                                option(o, value=o)
-                with li(cls='bbord'):
-                    i(id='qbittorrentaddpaused', cls='fa fa-square-o checkbox', value=c[c_s]['qbittorrentaddpaused'])
-                    span(u'Add Paused')
 
                 with li():
                     with span(cls='test_connection', mode='qbittorrent'):
                         i(cls='fa fa-plug')
                         span(u'Test Connection')
-
 
             # c_s = 'Deluge'
             # with li():
