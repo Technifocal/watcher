@@ -195,7 +195,7 @@ class Postprocessing(object):
         Returns str absolute path /home/user/filename.ext
         '''
 
-        logging.info(u'Finding movie file name.')
+        logging.info(u'Finding movie file.')
         if os.path.isfile(path):
             return path
         else:
@@ -259,13 +259,16 @@ class Postprocessing(object):
             titledata.pop('excess')
 
         if len(titledata) <= 2:
-            logging.info(u'Parsing filename doesn\'t look accurate. Parsing parent folder name')
+            logging.info(u'Parsing filename doesn\'t look accurate. Parsing parent folder name.')
             path_list = filepath.split(os.sep)
             if len(path_list) >= 2:
                 titledata = PTN.parse(path_list[-2])
+                logging.info(u'Found {} in parent folder.'.format(titledata))
             else:
                 logging.info(u'Unable to parse file name or folder.')
                 return data
+        else:
+            logging.info(u'Found {} in filname.'.format(titledata))
 
         # this key is useless
         if 'excess' in titledata:
@@ -301,6 +304,7 @@ class Postprocessing(object):
         logging.info(u'Searching local database for guid.')
         result = self.sql.get_single_search_result('guid', data['guid'])
         if not result:
+            logging.info('Guid not found.')
             if 'downloadid' in data.keys():
                 # try to get result from downloadid
                 logging.info(u'Searching local database for downloadid.')
@@ -602,22 +606,24 @@ class Postprocessing(object):
         Returns str new path
         '''
 
-        # ## left off
-        # Use this to replace Mover and Renamer paths. Also use to get plain filename
-        # for moving extra files.
+        for k, v in data.iteritems():
+            k = "{"+k+"}"
+            if k in string:
+                string = string.replace(k, v)
 
-        new_string = string.format(**data)
+        while '  ' in string:
+            string = string.replace('  ', ' ')
 
-        while '  ' in new_string:
-            new_string = new_string.replace('  ', ' ')
-
-        while len(new_string) > 1 and new_string[-1] == u' ':
-            new_string = new_string[:-1]
+        while len(string) > 1 and string[-1] == u' ':
+            string = string[:-1]
 
         repl = core.CONFIG['Postprocessing']['replaceillegal']
-        new_string = re.sub(r'["*?<>|]+', repl, new_string)
+        string = re.sub(r'["*?<>|]+', repl, string)
 
-        return new_string
+        drive, path = os.path.splitdrive(string)
+        path.replace(':', repl)
+
+        return ''.join([drive, path])
 
     def renamer(self, data):
         ''' Renames movie file based on renamerstring.
@@ -643,7 +649,7 @@ class Postprocessing(object):
         ext = os.path.splitext(abs_path_old)[1]
 
         # get the new file name
-        new_name = self.compile_path(renamer_string, data).replace(':', core.CONFIG['Postprocessing']['replaceillegal'])
+        new_name = self.compile_path(renamer_string, data)
 
         if not new_name:
             logging.info(u'New file name would be blank. Cancelling renamer.')

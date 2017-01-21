@@ -40,6 +40,8 @@ class Transmission(object):
         ''' Adds torrent or magnet to Transmission
         data: dict of torrrent/magnet information
 
+        Adds torrents to /default/path/<category>
+
         Returns dict {'response': 'true', 'download_id': 'id'}
                      {'response': 'false', 'error': 'exception'}
 
