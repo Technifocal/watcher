@@ -219,7 +219,7 @@ class Settings():
             with li(cls='bbord'):
                 span(u'Required words:')
                 input(type='text', id='requiredwords', value=c[c_s]['requiredwords'])
-                span(u'Releases must contain these words.', cls='tip')
+                span(u'Releases must contain one of these words.', cls='tip')
             with li(cls='bbord'):
                 span(u'Preferred words:')
                 input(type='text', id='preferredwords', value=c[c_s]['preferredwords'])
@@ -250,7 +250,9 @@ class Settings():
                             i(cls='newznab_check fa fa-square-o checkbox', value=c[c_s][n][2])
                             input(type='text', cls='newznab_url', value=c[c_s][n][0], placeholder=" http://www.indexer-url.com/")
                             input(type='text', cls='newznab_api', value=c[c_s][n][1], placeholder=" Api Key")
-                    with li():
+                            i(cls='newznab_clear fa fa-trash-o')
+                            i(cls='newznab_test fa fa-plug')
+                    with li(id='add_newznab_row'):
                         i(cls='fa fa-plus-square', id='add_newznab_row')
 
                 c_s = 'TorIndexers'

@@ -103,6 +103,11 @@ span#update_check{
     cursor: pointer;
 }
 
+/* Search */
+input#retention{
+    width: 4em;
+}
+
 /* Providers */
 
 div#content ul#providers{
@@ -110,35 +115,41 @@ div#content ul#providers{
 }
 
 div#content ul#newznab_list,
-div#content ul#torrentpotato_list{
+div#content ul#torrentpotato_list,{
     float: left;
     width: 100%;
 }
 
-
-input#retention{
-    width: 4em;
+ul#newznab_list li,
+ul#torrentpotato_list li{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
 }
 
-.newznab_check,
-.torrentpotato_check{
-    width: 5%;
+
+i.newznab_check,
+i.torrentpotato_check{
+    width: 1.2em;
+    text-align: left;
+    flex: 0 1 auto;
 }
 
-.newznab_url,
-.torrentpotato_url{
-    width: 40%;
-    margin: 0 2.5%;
+i.newznab_clear, i.newznab_test{
+    width: 1.5em;
+    text-align: center;
+    flex: 0 1 auto;
 }
 
-.newznab_api,
-.torrentpotato_api{
-    width: 40%;
-    margin: 0 2.5%;
+input.newznab_url, input.newznab_api,
+input.torrentpotato_url, input.torrentpotato_api{
+    flex: 1 0 auto;
+    margin: 0 0.5em;
 }
 
-i#add_newznab_row,
-i#add_torrentpotato_row{
+li#add_newznab_row,
+li#add_torrentpotato_row{
     margin: 0 0 2em 0;
 }
 
@@ -213,6 +224,8 @@ ul#usenet, ul#torrent{
 ul#sabnzbd, ul#nzbget, ul#transmission, ul#deluge, ul#qbittorrent{
     margin: 0 0 1em 2em;
     display: none;
+    width: 100%;
+
 }
 
 span.test_connection{
@@ -271,6 +284,7 @@ pre#log_display {
     background-color: #eee;
     border: 1px solid #bdbdbd;
     white-space: pre-wrap;
+    word-wrap: break-word;
     text-indent: 2em;
 }
 

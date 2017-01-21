@@ -7,7 +7,7 @@ import threading
 
 import cherrypy
 import core
-from core import config, poster, searcher, snatcher, sqldb, updatestatus, version
+from core import config, newznab, poster, searcher, snatcher, sqldb, updatestatus, version
 from core.helpers import Conversions, Comparisons
 from core.downloaders import deluge, nzbget, sabnzbd, transmission, qbittorrent
 from core.movieinfo import OMDB, TMDB
@@ -31,6 +31,7 @@ class Ajax(object):
         self.omdb = OMDB()
         self.tmdb = TMDB()
         self.config = config.Config()
+        self.nn = newznab.NewzNab()
         self.predb = predb.PreDB()
         self.searcher = searcher.Searcher()
         self.sql = sqldb.SQL()
@@ -294,7 +295,6 @@ class Ajax(object):
 
         Returns str json.dumps(dict) success/fail message
         '''
-
         # TODO add check for torrent/nzb enabled
 
         data = dict(self.sql.get_single_search_result('guid', guid))
@@ -606,3 +606,7 @@ class Ajax(object):
             log_text = f.read()
 
         return log_text
+
+    @cherrypy.expose
+    def newznab_test(self, indexer, apikey):
+        return json.dumps(self.nn.test_connection(indexer, apikey))

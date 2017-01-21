@@ -27,7 +27,6 @@ $(document).ready(function () {
         }
     });
 
-
     /* Server */
 
     // Generate new api key
@@ -131,13 +130,59 @@ $(document).ready(function () {
     $("div.providers i#add_newznab_row").click(function (){
         var row = "<li class='newznab_indexer'>\n<i class='fa fa-square-o newznab_check checkbox' value='false'></i>\n<input class='newznab_url' placeholder=' http://www.indexer-url.com/' type='text'>\n<input class='newznab_api' placeholder=' Api Key' type='text'>\n</li>"
 
-        $("div.providers ul#newznab_list li:nth-last-child(2)").after(row);
+        $("ul#newznab_list li:nth-last-child(2)").after(row);
     });
 
     $("div.providers i#add_torrentpotato_row").click(function (){
         var row = "<li class='torrentpotato_indexer'>\n<i class='fa fa-square-o torrentpotato_check checkbox' value='false'></i>\n<input class='torrentpotato_url' placeholder=' http://www.indexer-url.com/' type='text'>\n<input class='torrentpotato_api' placeholder=' Api Key' type='text'>\n</li>"
 
         $("div.providers ul#torrentpotato_list li:nth-last-child(2)").after(row);
+    });
+
+    // clear row
+    $("div.providers ul#newznab_list").on("click", "i.newznab_clear", function(){
+        $li = $(this).parent();
+        $li.find('input').each(function(){
+            $(this).val("");
+        });
+    });
+
+    // test newznab connection
+    $("div.providers ul#newznab_list").on("click", "i.newznab_test", function(){
+        $this = $(this);
+        var name = $this.attr('name');
+
+        $this.removeClass("fa-plug");
+        $this.addClass("fa-circle faa-burst animated");
+
+        var url = "";
+        var api = "";
+
+        $li = $(this).parent();
+        $li.find('input.newznab_url').each(function(){
+            url = $(this).val();
+        });
+
+        $li.find('input.newznab_api').each(function(){
+            api = $(this).val();
+        });
+
+        $.post(url_base + "/ajax/newznab_test", {"indexer": url, "apikey": api})
+        .done(function(r){
+            response = JSON.parse(r);
+            if(response["code"] == 10061){
+                toastr.error(response["description"]);
+            } else if(response["code"] == 100){
+                toastr.warning(response["description"]);
+            } else if(response["code"] == 200){
+                toastr.success("Connection successful.");
+            }
+
+        $this.addClass("fa-plug");
+        $this.removeClass("fa-circle faa-burst animated");
+
+        })
+
     });
 
 
@@ -175,7 +220,7 @@ $(document).ready(function () {
             $this.removeClass("fa-circle-o")
             $this.addClass("fa-circle");
         // and turn off the other ones
-            tog = $this.attr("tog");
+            var tog = $this.attr("tog");
             $("ul#"+tog).stop().slideDown();
             $downloaders.filter("ul").not("#"+tog).stop().slideUp()
             $("i.radio[name='" + name + "']").not($this).attr("value", "false").removeClass("fa-circle").addClass("fa-circle-o");

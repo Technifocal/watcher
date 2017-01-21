@@ -200,15 +200,6 @@ class Searcher():
         # This iterates through the new search results and submits only results we haven't already stored. This keeps it from overwriting the FoundDate
         BATCH_DB_STRING = []
 
-        # # get list of guids of existing results
-        # if existing_results:
-        #     for res in existing_results:
-        #         kept_guids.append(res['guid'])
-        #
-        # for result in results:
-        #     # if result already exists in table ignore it
-        #     if result['guid'] in kept_guids:
-        #         continue
 
         for result in results:
             DB_STRING = result
