@@ -23,12 +23,12 @@ data = {}
 
 args = sys.argv
 
-download_dir = sys.argv[2]
+download_dir = args[2]          # %D
 
 while download_dir[-1] in ['/', '\\']:
     download_dir = download_dir[:-1]
 
-parent_folder = os.path.split(download_dir)[-1]  # %D
+parent_folder = os.path.split(download_dir)[-1]
 
 if parent_folder.lower() != category.lower():
     # Not watcher category
