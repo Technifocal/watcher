@@ -3,7 +3,7 @@ from datetime import datetime
 
 import core
 from core import sqldb, updatestatus
-from core.downloaders import qbittorrent, nzbget, sabnzbd, transmission
+from core.downloaders import deluge, qbittorrent, nzbget, sabnzbd, transmission
 
 logging = logging.getLogger(__name__)
 
@@ -172,6 +172,46 @@ class Snatcher():
                 if self.update_status_snatched(guid, imdbid):
                     logging.info(u'Successfully sent {} to QBittorrent.'.format(title))
                     return {'response': 'true', 'message': 'Sent to QBittorrent.'}
+                else:
+                    return {'response': 'false', 'error': 'Could not mark '
+                            'search result as Snatched.'}
+            else:
+                return response
+
+        # If sending to DelugeRPC
+        delugerpc_conf = core.CONFIG['DelugeRPC']
+        if delugerpc_conf['delugerpcenabled'] == u'true':
+            logging.info(u'Sending {} to DelugeRPC'.format(kind))
+            response = deluge.DelugeRPC.add_torrent(data)
+
+            if response['response'] is 'true':
+
+                # store downloadid in database
+                self.sql.update('SEARCHRESULTS', 'downloadid', response['downloadid'], guid=guid)
+
+                if self.update_status_snatched(guid, imdbid):
+                    logging.info(u'Successfully sent {} to DelugeRPC.'.format(title))
+                    return {'response': 'true', 'message': 'Sent to Deluge.'}
+                else:
+                    return {'response': 'false', 'error': 'Could not mark '
+                            'search result as Snatched.'}
+            else:
+                return response
+
+        # If sending to DelugeWeb
+        delugeweb_conf = core.CONFIG['DelugeWeb']
+        if delugeweb_conf['delugewebenabled'] == u'true':
+            logging.info(u'Sending {} to DelugeWeb'.format(kind))
+            response = deluge.DelugeWeb.add_torrent(data)
+
+            if response['response'] is 'true':
+
+                # store downloadid in database
+                self.sql.update('SEARCHRESULTS', 'downloadid', response['downloadid'], guid=guid)
+
+                if self.update_status_snatched(guid, imdbid):
+                    logging.info(u'Successfully sent {} to DelugeWeb.'.format(title))
+                    return {'response': 'true', 'message': 'Sent to Deluge.'}
                 else:
                     return {'response': 'false', 'error': 'Could not mark '
                             'search result as Snatched.'}
