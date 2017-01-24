@@ -537,6 +537,10 @@ class Settings():
                     input(type='text', style='width: 15em', id='moveextensions', value=c[c_s]['moveextensions'], placeholder='srt, nfo')
                     span(u'Files will be renamed with Renamer settings.', cls='tip')
                     br()
+                    i(id='createhardlink', cls='fa fa-square-o checkbox', value=c[c_s]['createhardlink'])
+                    span(u'Create hardlink to enable seeding torrents.')
+                    span(u'Will disable clean up.', cls='tip')
+                    br()
                     i(id='cleanupenabled', cls='fa fa-square-o checkbox', value=c[c_s]['cleanupenabled'])
                     span(u'Clean up after move.')
             with li(u'Replace illegal characters with: ', cls='bbord'):
