@@ -439,15 +439,19 @@ class Postprocessing(object):
             r = u'false'
         result['tasks']['update_movie_status'] = r
 
-        # delete failed files
-        if core.CONFIG['Postprocessing']['cleanupfailed'] == u'true':
-            result['tasks']['cleanup'] = {'enabled': 'true', 'path': data['path']}
-
-            logging.info(u'Deleting leftover files from failed download.')
-            if self.cleanup(data['path']) is True:
-                result['tasks']['cleanup']['response'] = u'true'
+        # delete failed files, only if hardlinks is disabled
+        if config['cleanupfailed'] == u'true':
+            if core['createhardlink'] == u'true':
+                logging.info('Hardlink creation enabled, skipping cleanup.')
+                result['tasks']['cleanup'] = {'enabled': 'true', 'response': 'skipped'}
             else:
-                result['tasks']['cleanup']['response'] = u'false'
+                result['tasks']['cleanup'] = {'enabled': 'true', 'path': data['path']}
+
+                logging.info(u'Deleting leftover files from failed download.')
+                if self.cleanup(data['path']) is True:
+                    result['tasks']['cleanup']['response'] = u'true'
+                else:
+                    result['tasks']['cleanup']['response'] = u'false'
         else:
             result['tasks']['cleanup'] = {'enabled': 'false'}
 
@@ -717,7 +721,15 @@ class Postprocessing(object):
             logging.error(u'Mover failed: Could not move file.', exc_info=True)
             return False
 
+        new_file_location = os.path.join(target_folder, os.path.basename(data['filename']))
+
         # Create hardlink
+        if config['createhardlink'] == u'true':
+            if os.name == 'nt':
+                import ctypes
+                ctypes.windll.kernel32.CreateHardLinkA(data['orig_filename'], new_file_location, 0)
+            else:
+                os.link(new_file_location, data['orig_filename'])
 
         logging.info(u'Copying and renaming any extra files.')
 
@@ -742,12 +754,11 @@ class Postprocessing(object):
                         target_file = u'{}{}'.format(os.path.join(target_folder, new_filename), ext)
                     try:
                         logging.info(u'Moving {} to {}'.format(old_abs_path, target_file))
-                        shutil.copystat = self.null
-                        shutil.move(old_abs_path, target_file)
+                        shutil.copyfile(old_abs_path, target_file)
                     except Exception, e: # noqa
-                        logging.error(u'Mover failed: Could not move {}.'.format(old_abs_path), exc_info=True)
+                        logging.error(u'Mover failed: Could not copy {}.'.format(old_abs_path), exc_info=True)
 
-        return os.path.join(target_folder, os.path.basename(data['filename']))
+        return new_file_location
 
     def cleanup(self, path):
         ''' Deletes specified path
