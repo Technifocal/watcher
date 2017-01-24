@@ -689,7 +689,7 @@ class Postprocessing(object):
         # if the new folder doesn't exist, make it
         try:
             if not os.path.exists(target_folder):
-                os.mkdirs(target_folder)
+                os.makedirs(target_folder)
         except Exception, e:
             logging.error(u'Mover failed: Could not create missing directory {}.'.format(target_folder), exc_info=True)
             return False
@@ -702,6 +702,8 @@ class Postprocessing(object):
         except Exception, e: # noqa
             logging.error(u'Mover failed: Could not move file.', exc_info=True)
             return False
+
+        # Create hardlink
 
         logging.info(u'Moving and renaming any extra files.')
 
