@@ -24,10 +24,10 @@ def settings_page(page):
         with doc.head:
             meta(name='git_url', content=core.GIT_URL)
             Head.insert()
-            link(rel='stylesheet', href=core.URL_BASE + '/static/css/settings.css?v=01.19')
-            link(rel='stylesheet', href=core.URL_BASE + '/static/css/{}/settings.css'.format(core.CONFIG['Server']['theme']))
-            script(type='text/javascript', src=core.URL_BASE + '/static/js/settings/main.js?v=01.19')
-            script(type='text/javascript', src=core.URL_BASE + '/static/js/settings/save_settings.js?v=01.19')
+            link(rel='stylesheet', href=core.URL_BASE + '/static/css/settings.css?v=01.23')
+            link(rel='stylesheet', href=core.URL_BASE + '/static/css/{}/settings.css?v=01.23'.format(core.CONFIG['Server']['theme']))
+            script(type='text/javascript', src=core.URL_BASE + '/static/js/settings/main.js?v=01.23')
+            script(type='text/javascript', src=core.URL_BASE + '/static/js/settings/save_settings.js?v=01.23')
 
         with doc:
             Header.insert_header(current="settings")
@@ -255,21 +255,31 @@ class Settings():
                             input(type='text', cls='newznab_url', value=c[c_s][n][0], placeholder=" http://www.indexer-url.com/")
                             input(type='text', cls='newznab_api', value=c[c_s][n][1], placeholder=" Api Key")
                             i(cls='newznab_clear fa fa-trash-o')
-                            i(cls='newznab_test fa fa-plug')
-                    with li(id='add_newznab_row'):
+                            i(cls='indexer_test fa fa-plug', type='newznab')
+                    with li(cls='add_newznab_row'):
                         i(cls='fa fa-plus-square', id='add_newznab_row')
 
-                c_s = 'TorIndexers'
-                with ul(id='torrentpotato_list'):
+                c_s = 'PotatoIndexers'
+                with ul(id='potato_list'):
                     with li(cls='sub_cat'):
                         span(u'Torrent Potato Indexers')
                     for n in c[c_s]:
-                        with li(cls='torrentpotato_indexer'):
-                            i(cls='torrentpotato_check fa fa-square-o checkbox', value=c[c_s][n][2])
-                            input(type='text', cls='torrentpotato_url', value=c[c_s][n][0], placeholder=" http://www.indexer-url.com/")
-                            input(type='text', cls='torrentpotato_api', value=c[c_s][n][1], placeholder=" Api Key")
-                    with li():
-                        i(cls='fa fa-plus-square', id='add_torrentpotato_row')
+                        with li(cls='potato_indexer'):
+                            i(cls='potato_check fa fa-square-o checkbox', value=c[c_s][n][2])
+                            input(type='text', cls='potato_url', value=c[c_s][n][0], placeholder=" http://www.indexer-url.com/")
+                            input(type='text', cls='potato_api', value=c[c_s][n][1], placeholder=" Api Key")
+                            i(cls='potato_clear fa fa-trash-o')
+                            i(cls='indexer_test fa fa-plug', type='potato')
+                    with li(cls='add_potato_row'):
+                        i(cls='fa fa-plus-square', id='add_potato_row')
+
+                c_s = 'TorrentIndexers'
+                with ul(id='torrentindexer_list'):
+                    with li(cls='sub_cat'):
+                        span(u'Torrent Indexers')
+                    with li(cls='torrent_indexer', id='rarbg'):
+                        i(cls='torrent_check fa fa-square-o checkbox', value=c[c_s]['rarbg'])
+                        span('Search Rarbg')
 
         with div(id='save', cat='providers'):
             i(cls='fa fa-save')
@@ -419,44 +429,72 @@ class Settings():
                         i(cls='fa fa-plug')
                         span(u'Test Connection')
 
-            # c_s = 'Deluge'
-            # with li():
-            #     i(id='delugeenabled', cls='fa fa-circle-o radio', name='torrentdownloader', tog='deluge', value=c[c_s]['delugeenabled'])
-            #     span(u'Deluge', cls='sub_cat')
-            # with ul(id='deluge', cls='torrent'):
-            #     with li():
-            #         i(id='delugewebui', cls='fa fa-square-o checkbox', value=c[c_s]['delugewebui'])
-            #         span('Use Web UI instead of daemon.')
-            #
-            #     with li(u'Host & Port: ', cls='bbord'):
-            #         input(type='text', id='delugehost', value=c[c_s]['delugehost'], style='width: 25%', placeholder='http://localhost')
-            #         span(u' : ')
-            #         input(type='text', id='delugeport', value=c[c_s]['delugeport'], style='width: 25%')
-            #     with li(u'User Name: ', cls='bbord'):
-            #         input(type='text', id='delugeuser', value=c[c_s]['delugeuser'], style='width: 50%')
-            #         span(u'Leave blank for none.', cls='tip')
-            #     with li(u'Password: ', cls='bbord'):
-            #         input(type='text', id='delugepass', value=c[c_s]['delugepass'], style='width: 50%')
-            #         span(u'Leave blank for none.', cls='tip')
-            #     with li(u'Category: ', cls='bbord'):
-            #         input(type='text', id='delugecategory', value=c[c_s]['delugecategory'], style='width: 50%')
-            #         span(u'i.e. \'movies\', \'watcher\'. ', cls='tip')
-            #     with li(u'Priority: ', cls='bbord'):
-            #         with select(id='delugepriority', style='width: 50%'):
-            #             pl = ['Low', 'Normal', 'High']
-            #             for o in pl:
-            #                 if o == c[c_s]['delugepriority']:
-            #                     option(o, value=o, selected="selected")
-            #                 else:
-            #                     option(o, value=o)
-            #     with li(cls='bbord'):
-            #         i(id='delugeaddpaused', cls='fa fa-square-o checkbox', value=c[c_s]['delugeaddpaused'])
-            #         span(u'Add Paused')
-            #
-            #     with li():
-            #         with span(cls='test_connection', mode='deluge'):
-            #             i(cls='fa fa-plug')
-            #             span(u'Test Connection')
+            c_s = 'DelugeRPC'
+            with li():
+                i(id='delugerpcenabled', cls='fa fa-circle-o radio', name='torrentdownloader', tog='delugerpc', value=c[c_s]['delugerpcenabled'])
+                span(u'Deluge Daemon', cls='sub_cat')
+            with ul(id='delugerpc', cls='torrent'):
+                with li(u'Host & Port: ', cls='bbord'):
+                    input(type='text', id='delugerpchost', value=c[c_s]['delugerpchost'], style='width: 25%', placeholder='http://localhost')
+                    span(u' : ')
+                    input(type='text', id='delugerpcport', value=c[c_s]['delugerpcport'], style='width: 25%')
+                with li(u'User Name: ', cls='bbord'):
+                    input(type='text', id='delugerpcuser', value=c[c_s]['delugerpcuser'], style='width: 50%')
+                    span(u'Leave blank for none.', cls='tip')
+                with li(u'Password: ', cls='bbord'):
+                    input(type='text', id='delugerpcpass', value=c[c_s]['delugerpcpass'], style='width: 50%')
+                    span(u'Leave blank for none.', cls='tip')
+                with li(u'Category: ', cls='bbord'):
+                    input(type='text', id='delugerpccategory', value=c[c_s]['delugerpccategory'], style='width: 50%')
+                    span(u'i.e. \'movies\', \'watcher\'. ', cls='tip')
+                with li(u'Priority: ', cls='bbord'):
+                    with select(id='delugerpcpriority', style='width: 50%'):
+                        pl = ['Normal', 'High', 'Max']
+                        for o in pl:
+                            if o == c[c_s]['delugerpcpriority']:
+                                option(o, value=o, selected="selected")
+                            else:
+                                option(o, value=o)
+                with li(cls='bbord'):
+                    i(id='delugerpcaddpaused', cls='fa fa-square-o checkbox', value=c[c_s]['delugerpcaddpaused'])
+                    span(u'Add Paused')
+
+                with li():
+                    with span(cls='test_connection', mode='delugerpc'):
+                        i(cls='fa fa-plug')
+                        span(u'Test Connection')
+
+            c_s = 'DelugeWeb'
+            with li():
+                i(id='delugewebenabled', cls='fa fa-circle-o radio', name='torrentdownloader', tog='delugeweb', value=c[c_s]['delugewebenabled'])
+                span(u'Deluge Web UI', cls='sub_cat')
+            with ul(id='delugeweb', cls='torrent'):
+                with li(u'Host & Port: ', cls='bbord'):
+                    input(type='text', id='delugewebhost', value=c[c_s]['delugewebhost'], style='width: 25%', placeholder='http://localhost')
+                    span(u' : ')
+                    input(type='text', id='delugewebport', value=c[c_s]['delugewebport'], style='width: 25%')
+                with li(u'Password: ', cls='bbord'):
+                    input(type='text', id='delugewebpass', value=c[c_s]['delugewebpass'], style='width: 50%')
+                    span(u'Leave blank for none.', cls='tip')
+                with li(u'Category: ', cls='bbord'):
+                    input(type='text', id='delugewebcategory', value=c[c_s]['delugewebcategory'], style='width: 50%')
+                    span(u'i.e. \'movies\', \'watcher\'. ', cls='tip')
+                with li(u'Priority: ', cls='bbord'):
+                    with select(id='delugewebpriority', style='width: 50%'):
+                        pl = ['Normal', 'High', 'Max']
+                        for o in pl:
+                            if o == c[c_s]['delugewebpriority']:
+                                option(o, value=o, selected="selected")
+                            else:
+                                option(o, value=o)
+                with li(cls='bbord'):
+                    i(id='delugewebaddpaused', cls='fa fa-square-o checkbox', value=c[c_s]['delugewebaddpaused'])
+                    span(u'Add Paused')
+
+                with li():
+                    with span(cls='test_connection', mode='delugeweb'):
+                        i(cls='fa fa-plug')
+                        span(u'Test Connection')
 
         with div(id='save', cat='downloader'):
             i(cls='fa fa-save')
