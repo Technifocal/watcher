@@ -2,11 +2,9 @@ import logging
 import json
 import urllib
 import urllib2
-import hashlib
-
-from lib import bencode
 
 import core
+from core.helpers import Torrent
 
 logging = logging.getLogger(__name__)
 
@@ -31,7 +29,7 @@ class QBittorrent(object):
 
         url = u'{}:{}/'.format(host, port)
 
-        return QBittorrent.login(url, user, password)
+        return QBittorrent._login(url, user, password)
 
     @staticmethod
     def add_torrent(data):
@@ -54,11 +52,11 @@ class QBittorrent(object):
         user = qbit_conf['qbittorrentuser']
         password = qbit_conf['qbittorrentpass']
 
-        # check cookie validity
+        # check cookie validity while getting default download dir
         download_dir = QBittorrent._get_download_dir(base_url)
 
         if not download_dir:
-            if QBittorrent.login(base_url, user, password) is not True:
+            if QBittorrent._login(base_url, user, password) is not True:
                 return {'response': 'false', 'error': 'Incorrect usename or password.'}
 
         download_dir = QBittorrent._get_download_dir(base_url)
@@ -82,7 +80,7 @@ class QBittorrent(object):
 
         try:
             urllib2.urlopen(request)  # QBit returns an empty string
-            downloadid = QBittorrent._get_hash(data['torrentfile'])
+            downloadid = Torrent.get_hash(data['torrentfile'])
             return {'response': 'true', 'downloadid': downloadid}
         except (SystemExit, KeyboardInterrupt):
             raise
@@ -112,7 +110,7 @@ class QBittorrent(object):
         return urllib2.urlopen(request).read()
 
     @staticmethod
-    def login(url, username, password):
+    def _login(url, username, password):
 
         data = {'username': username,
                 'password': password
@@ -140,20 +138,6 @@ class QBittorrent(object):
         except Exception, e:
             logging.error(u'qbittorrent test_connection', exc_info=True)
             return u'{}.'.format(str(e.reason))
-
-    @staticmethod
-    def _get_hash(url, mode='torrent'):
-        if url.startswith('magnet'):
-            return url.split('&')[0].split(':')[-1]
-        else:
-            try:
-                req = urllib2.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-                torrent = urllib2.urlopen(req).read()
-                metadata = bencode.bdecode(torrent)
-                hashcontents = bencode.bencode(metadata['info'])
-                return hashlib.sha1(hashcontents).hexdigest()
-            except Exception, e: #noqa
-                return None
 
 
 '''
