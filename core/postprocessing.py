@@ -724,7 +724,9 @@ class Postprocessing(object):
         new_file_location = os.path.join(target_folder, os.path.basename(data['filename']))
 
         # Create hardlink
+
         if config['createhardlink'] == u'true':
+            logging.info('Creating hardlink from {} to {}.'.format(new_file_location, data['orig_filename']))
             if os.name == 'nt':
                 import ctypes
                 ctypes.windll.kernel32.CreateHardLinkA(data['orig_filename'], new_file_location, 0)
