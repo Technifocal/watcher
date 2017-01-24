@@ -439,19 +439,15 @@ class Postprocessing(object):
             r = u'false'
         result['tasks']['update_movie_status'] = r
 
-        # delete failed files, only if hardlinks is disabled
+        # delete failed files
         if config['cleanupfailed'] == u'true':
-            if config['createhardlink'] == u'true':
-                logging.info('Hardlink creation enabled, skipping cleanup.')
-                result['tasks']['cleanup'] = {'enabled': 'true', 'response': 'skipped'}
-            else:
-                result['tasks']['cleanup'] = {'enabled': 'true', 'path': data['path']}
+            result['tasks']['cleanup'] = {'enabled': 'true', 'path': data['path']}
 
-                logging.info(u'Deleting leftover files from failed download.')
-                if self.cleanup(data['path']) is True:
-                    result['tasks']['cleanup']['response'] = u'true'
-                else:
-                    result['tasks']['cleanup']['response'] = u'false'
+            logging.info(u'Deleting leftover files from failed download.')
+            if self.cleanup(data['path']) is True:
+                result['tasks']['cleanup']['response'] = u'true'
+            else:
+                result['tasks']['cleanup']['response'] = u'false'
         else:
             result['tasks']['cleanup'] = {'enabled': 'false'}
 
@@ -582,12 +578,19 @@ class Postprocessing(object):
             logging.info(u'Mover disabled.')
             result['tasks']['mover'] = {'enabled': 'false'}
 
-        # delete leftover dir, only if mover was enabled & successful
+        # Delete leftover dir. Skip if createhardlinks enabled or if mover disabled/failed
         if config['cleanupenabled'] == u'true':
             result['tasks']['cleanup'] = {'enabled': 'true'}
+
+            if config['createhardlink'] == u'true':
+                logging.info('Hardlink creation enabled. Skipping Cleanup.')
+                result['tasks']['cleanup']['response'] = 'skipped'
+                return result
+
             # fail if mover disabled or failed
             if config['moverenabled'] == u'false' or \
                     result['tasks']['mover']['response'] == u'false':
+                logging.info('Mover either disabled or failed. Skipping Cleanup.')
                 result['tasks']['cleanup']['response'] = u'false'
             else:
                 if self.cleanup(data['path']):
