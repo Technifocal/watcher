@@ -7,9 +7,9 @@ import threading
 
 import cherrypy
 import core
-from core import config, newznab, poster, searcher, snatcher, sqldb, updatestatus, version
+from core import config, newznab, poster, searcher, snatcher, sqldb, torrent, updatestatus, version
 from core.helpers import Conversions, Comparisons
-from core.downloaders import deluge, nzbget, sabnzbd, transmission, qbittorrent
+from core.downloaders import nzbget, sabnzbd, transmission, qbittorrent, deluge
 from core.movieinfo import OMDB, TMDB
 from core.notification import Notification
 from core.rss import predb
@@ -406,12 +406,17 @@ class Ajax(object):
                 response['status'] = u'false'
                 response['message'] = test
 
-        if mode == u'deluge':
-            if data['delugewebui'] == 'true':
-                print 'WEBUI'
-                test = deluge.DelugeWeb.test_connection(data)
+        if mode == u'delugerpc':
+            test = deluge.DelugeRPC.test_connection(data)
+            if test is True:
+                response['status'] = u'true'
+                response['message'] = u'Connection successful.'
             else:
-                test = deluge.Deluged.test_connection(data)
+                response['status'] = u'false'
+                response['message'] = test
+
+        if mode == u'delugeweb':
+            test = deluge.DelugeWeb.test_connection(data)
             if test is True:
                 response['status'] = u'true'
                 response['message'] = u'Connection successful.'
