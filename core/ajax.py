@@ -31,7 +31,6 @@ class Ajax(object):
         self.omdb = OMDB()
         self.tmdb = TMDB()
         self.config = config.Config()
-        self.nn = newznab.NewzNab()
         self.predb = predb.PreDB()
         self.searcher = searcher.Searcher()
         self.sql = sqldb.SQL()
@@ -613,5 +612,10 @@ class Ajax(object):
         return log_text
 
     @cherrypy.expose
-    def newznab_test(self, indexer, apikey):
-        return json.dumps(self.nn.test_connection(indexer, apikey))
+    def indexer_test(self, indexer, apikey, mode):
+        if mode == 'newznab':
+            return json.dumps(newznab.NewzNab.test_connection(indexer, apikey))
+        elif mode == 'potato':
+            return json.dumps(torrent.Torrent.test_potato_connection(indexer, apikey))
+        else:
+            return None
