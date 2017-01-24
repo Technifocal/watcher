@@ -28,9 +28,6 @@ class DelugeRPC(object):
         user = data['delugerpcuser']
         password = data['delugerpcpass']
 
-        print user
-        print password
-
         client = DelugeRPCClient(host, port, user, password)
         try:
             error = client.connect()

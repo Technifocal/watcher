@@ -31,7 +31,6 @@ class Transmission(object):
         except (SystemExit, KeyboardInterrupt):
             raise
         except Exception, e:
-            print e
             logging.error(u'Transmission test_connection', exc_info=True)
             return '{}.'.format(e)
 
@@ -84,6 +83,5 @@ class Transmission(object):
         except (SystemExit, KeyboardInterrupt):
             raise
         except Exception, e:
-            print e
             logging.error(u'Transmission add_torrent', exc_info=True)
             return {'response': 'false', 'error': str(e)}

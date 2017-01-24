@@ -52,9 +52,6 @@ class Torrent(object):
 
             search_string = u'{}?passkey={}&t=movie&imdbid={}'.format(url, passkey, imdbid)
 
-            print search_string
-
-
             logging.info(u'SEARCHING: {}?passkey=PASSKEY&t=movie&imdbid={}'.format(url, imdbid))
 
             request = urllib2.Request(search_string, headers={'User-Agent': 'Mozilla/5.0'})
