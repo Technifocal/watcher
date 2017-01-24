@@ -16,7 +16,7 @@ class Searcher():
         self.sql = sqldb.SQL()
         self.predb = predb.PreDB()
         self.snatcher = snatcher.Snatcher()
-        self.torrent = torrent.TorrentPotato()
+        self.torrent = torrent.Torrent()
         self.update = updatestatus.Status()
 
     # this only runs when scheduled. Only started by the user when changing search settings.
