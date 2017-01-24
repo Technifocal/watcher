@@ -115,13 +115,13 @@ div#content ul#providers{
 }
 
 div#content ul#newznab_list,
-div#content ul#torrentpotato_list,{
+div#content ul#potato_list,{
     float: left;
     width: 100%;
 }
 
 ul#newznab_list li,
-ul#torrentpotato_list li{
+ul#potato_list li{
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -130,26 +130,28 @@ ul#torrentpotato_list li{
 
 
 i.newznab_check,
-i.torrentpotato_check{
+i.potato_check,
+i.torrent_check{
     width: 1.2em;
     text-align: left;
     flex: 0 1 auto;
 }
 
-i.newznab_clear, i.newznab_test{
+i.newznab_clear, i.newznab_test,
+i.potato_clear, i.potato_test{
     width: 1.5em;
     text-align: center;
     flex: 0 1 auto;
 }
 
 input.newznab_url, input.newznab_api,
-input.torrentpotato_url, input.torrentpotato_api{
+input.potato_url, input.potato_api{
     flex: 1 0 auto;
     margin: 0 0.5em;
 }
 
-li#add_newznab_row,
-li#add_torrentpotato_row{
+li.add_newznab_row,
+li.add_potato_row{
     margin: 0 0 2em 0;
 }
 
@@ -221,7 +223,7 @@ ul#usenet, ul#torrent{
     margin: 0 0 4em 0;
 }
 
-ul#sabnzbd, ul#nzbget, ul#transmission, ul#deluge, ul#qbittorrent{
+ul#sabnzbd, ul#nzbget, ul#transmission, ul#delugerpc, ul#delugeweb, ul#qbittorrent{
     margin: 0 0 1em 2em;
     display: none;
     width: 100%;

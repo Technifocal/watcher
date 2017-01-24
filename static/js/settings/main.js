@@ -128,15 +128,15 @@ $(document).ready(function () {
 
     // Add new rows
     $("div.providers i#add_newznab_row").click(function (){
-        var row = "<li class='newznab_indexer'>\n<i class='fa fa-square-o newznab_check checkbox' value='false'></i>\n<input class='newznab_url' placeholder=' http://www.indexer-url.com/' type='text'>\n<input class='newznab_api' placeholder=' Api Key' type='text'>\n</li>"
+        var row = "<li class='newznab_indexer'>\n<i class='fa fa-square-o newznab_check checkbox' value='false'></i>\n<input class='newznab_url' placeholder=' http://indexer.url' type='text'>\n<input class='newznab_api' placeholder=' Api Key' type='text'><i class='newznab_clear fa fa-trash-o'></i><i class='newznab_test fa fa-plug'/>\n</li>"
 
         $("ul#newznab_list li:nth-last-child(2)").after(row);
     });
 
-    $("div.providers i#add_torrentpotato_row").click(function (){
-        var row = "<li class='torrentpotato_indexer'>\n<i class='fa fa-square-o torrentpotato_check checkbox' value='false'></i>\n<input class='torrentpotato_url' placeholder=' http://www.indexer-url.com/' type='text'>\n<input class='torrentpotato_api' placeholder=' Api Key' type='text'>\n</li>"
+    $("div.providers i#add_potato_row").click(function (){
+        var row = "<li class='potato_indexer'>\n<i class='fa fa-square-o potato_check checkbox' value='false'></i>\n<input class='potato_url' placeholder=' http://indexer.url' type='text'>\n<input class='potato_api' placeholder=' Api Key' type='text'><i class='potato_clear fa fa-trash-o'></i><i class='potato_test fa fa-plug'/>\n</li>"
 
-        $("div.providers ul#torrentpotato_list li:nth-last-child(2)").after(row);
+        $("div.providers ul#potato_list li:nth-last-child(2)").after(row);
     });
 
     // clear row
@@ -147,36 +147,34 @@ $(document).ready(function () {
         });
     });
 
-    // test newznab connection
-    $("div.providers ul#newznab_list").on("click", "i.newznab_test", function(){
+    // test indexer connection
+    $("div.providers").on("click", "i.indexer_test", function(){
         $this = $(this);
-        var name = $this.attr('name');
 
         $this.removeClass("fa-plug");
         $this.addClass("fa-circle faa-burst animated");
-
+        var mode = $this.attr('type');
         var url = "";
         var api = "";
 
         $li = $(this).parent();
-        $li.find('input.newznab_url').each(function(){
+        $li.find('input:eq(0)').each(function(){
             url = $(this).val();
         });
 
-        $li.find('input.newznab_api').each(function(){
+        $li.find('input:eq(1)').each(function(){
             api = $(this).val();
         });
 
-        $.post(url_base + "/ajax/newznab_test", {"indexer": url, "apikey": api})
+        $.post(url_base + "/ajax/indexer_test", {"indexer": url, "apikey": api, "mode": mode})
         .done(function(r){
             response = JSON.parse(r);
-            if(response["code"] == 10061){
-                toastr.error(response["description"]);
-            } else if(response["code"] == 100){
-                toastr.warning(response["description"]);
-            } else if(response["code"] == 200){
-                toastr.success("Connection successful.");
-            }
+            if(response["response"] == "true"){
+                toastr.success(response["message"]);
+            } else{
+                toastr.error(response["message"])
+            };
+
 
         $this.addClass("fa-plug");
         $this.removeClass("fa-circle faa-burst animated");

@@ -229,30 +229,41 @@ $(document).ready(function () {
         });
         data["Indexers"] = newznab_indexers;
 
-        torrentpotato_indexers = {};
+        potato_indexers = {};
         ind = 1;
-        $("#torrentpotato_list li").each(function(){
+        $("#potato_list li").each(function(){
             $this = $(this);
-            if ($this.attr("class") == "torrentpotato_indexer"){
-                var check = $this.children("i.torrentpotato_check").attr('value');
-                var url = $this.children("input.torrentpotato_url").val();
-                var api = $this.children("input.torrentpotato_api").val();
+            if ($this.attr("class") == "potato_indexer"){
+                var check = $this.children("i.potato_check").attr('value');
+                var url = $this.children("input.potato_url").val();
+                var api = $this.children("input.potato_api").val();
 
                 // check if one field is blank and both are not blank
                 if ( (url == "" || api == "") && (url + api !=="") ){
                     toastr.warning("Please complete or clear out incomplete providers.");
-                    torrentpotato_indexers = {}
+                    potato_indexers = {}
                     cancel = true;
                 }
 
                 // but ignore it if both are blank
                 else if (url + api !=="") {
-                    torrentpotato_indexers[ind] = [url, api, check].toString().toLowerCase();
+                    potato_indexers[ind] = [url, api, check].toString().toLowerCase();
                     ind++;
                 }
             }
         });
-        data["TorIndexers"] = torrentpotato_indexers;
+        data["PotatoIndexers"] = potato_indexers;
+
+        torrent_indexers = {}
+        $("#torrentindexer_list li").each(function(){
+            $this = $(this);
+            if ($this.attr("class") == "torrent_indexer"){
+                name = $this.attr('id');
+                check = $this.children("i.torrent_check").attr('value')
+                torrent_indexers[name] = check;
+            }
+        });
+        data['TorrentIndexers'] = torrent_indexers;
 
         if(cancel == true){
             return false;
@@ -305,18 +316,31 @@ $(document).ready(function () {
         });
         data["Transmission"] = transmission;
 
-        // var deluge = {};
-        // deluge["delugeenabled"] = $("i#delugeenabled").attr("value");
-        // $("ul#deluge li i.checkbox").each(function(){
-        //     deluge[$(this).attr("id")] = $(this).attr("value");
-        // });
-        // $("ul#deluge li input").not("[type=button]").each(function(){
-        //     deluge[$(this).attr("id")] = $(this).val();
-        // });
-        // $("ul#deluge li select").each(function(){
-        //     deluge[$(this).attr("id")] = $(this).val()
-        // });
-        // data["Deluge"] = deluge;
+        var delugerpc = {};
+        delugerpc["delugerpcenabled"] = $("i#delugerpcenabled").attr("value");
+        $("ul#delugerpc li i.checkbox").each(function(){
+            delugerpc[$(this).attr("id")] = $(this).attr("value");
+        });
+        $("ul#delugerpc li input").not("[type=button]").each(function(){
+            delugerpc[$(this).attr("id")] = $(this).val();
+        });
+        $("ul#delugerpc li select").each(function(){
+            delugerpc[$(this).attr("id")] = $(this).val()
+        });
+        data["DelugeRPC"] = delugerpc;
+
+        var delugeweb = {};
+        delugeweb["delugewebenabled"] = $("i#delugewebenabled").attr("value");
+        $("ul#delugeweb li i.checkbox").each(function(){
+            delugeweb[$(this).attr("id")] = $(this).attr("value");
+        });
+        $("ul#delugeweb li input").not("[type=button]").each(function(){
+            delugeweb[$(this).attr("id")] = $(this).val();
+        });
+        $("ul#delugeweb li select").each(function(){
+            delugeweb[$(this).attr("id")] = $(this).val()
+        });
+        data["DelugeWeb"] = delugeweb;
 
         var qbittorrent = {};
         qbittorrent["qbittorrentenabled"] = $("i#qbittorrentenabled").attr("value");
