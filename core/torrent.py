@@ -53,7 +53,7 @@ class Torrent(object):
             search_string = u'{}?passkey={}&t=movie&imdbid={}'.format(url, passkey, imdbid)
 
             print search_string
-            
+
 
             logging.info(u'SEARCHING: {}?passkey=PASSKEY&t=movie&imdbid={}'.format(url, imdbid))
 
@@ -184,7 +184,6 @@ class Rarbg(object):
 
     @staticmethod
     def search(imdbid):
-        #TODO test with bad token
         logging.info('Searching Rarbg for {}'.format(imdbid))
         if Rarbg.timeout:
             now = datetime.datetime.now()
