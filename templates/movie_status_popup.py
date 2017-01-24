@@ -25,7 +25,7 @@ class MovieStatusPopup():
 
         container = div(id='container')
         with container:
-            script(src=core.URL_BASE + '/static/js/status/movie_status_popup.js?v=01.18')
+            script(src=core.URL_BASE + '/static/js/status/movie_status_popup.js?v=01.24')
             if not data:
                 span(u'Unable to get movie information from database. Check logs for more information.')
                 return doc.render()
@@ -122,7 +122,7 @@ class MovieStatusPopup():
                         with span(cls='buttons'):
                             with a(href=info_link, target='_blank'):
                                 i(cls='fa fa-info-circle')
-                            i(cls='fa fa-download', id='manual_download', imdbid=imdbid, guid=guid)
+                            i(cls='fa fa-download', id='manual_download', kind=kind, guid=guid)
                             i(cls='fa fa-ban', id='mark_bad', guid=guid)
                     with li(cls='data ' + bbord):
                         span(u'Type: ')

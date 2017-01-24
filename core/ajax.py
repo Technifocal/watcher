@@ -288,13 +288,22 @@ class Ajax(object):
         return 'done'
 
     @cherrypy.expose
-    def manual_download(self, guid):
+    def manual_download(self, guid, kind):
         ''' Sends search result to downloader manually
         :param guid: str download link for nzb/magnet/torrent file.
+        :param kind: str type of download (torrent, magnet, nzb)
 
         Returns str json.dumps(dict) success/fail message
         '''
-        # TODO add check for torrent/nzb enabled
+
+        torrent_enabled = core.CONFIG['Sources']['torrentenabled'] == u'true'
+
+        usenet_enabled = core.CONFIG['Sources']['usenetenabled'] == u'true'
+
+        if kind == 'nzb' and not usenet_enabled:
+            return json.dumps({'response': 'false', 'error': 'Link is NZB but no Usent downloader is enabled.'})
+        if kind in ['torrent', 'magnet'] and not torrent_enabled:
+            return json.dumps({'response': 'false', 'error': 'Link is {} but no Torrent downloader is enabled.'.format(kind)})
 
         data = dict(self.sql.get_single_search_result('guid', guid))
         if data:
