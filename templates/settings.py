@@ -159,10 +159,14 @@ class Settings():
                 input(type='number', min='0', id='keepsearchingdays', style='width: 2.5em', value=c[c_s]['keepsearchingdays'])
                 span(u' days for best release.')
             with li(cls='bbord'):
-                span(u'Retention: ')
+                span(u'Usenet server retention: ')
                 input(type='number', min='0', id='retention', value=c[c_s]['retention'])
                 span(' days.')
                 span('Use 0 for no limit.', cls='tip')
+            with li(cls='bbord'):
+                span(u'Torrents require a minimum of ')
+                input(type='number', min='0', id='mintorrentseeds', value=c[c_s]['mintorrentseeds'], style='width: 2.5em')
+                span(' seeds.')
             with li(cls='bbord'):
                 i(id='score_title', cls='fa fa-square-o checkbox', value=c[c_s]['score_title'])
                 span('Score and filter release titles.')
