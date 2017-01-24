@@ -441,7 +441,7 @@ class Postprocessing(object):
 
         # delete failed files, only if hardlinks is disabled
         if config['cleanupfailed'] == u'true':
-            if core['createhardlink'] == u'true':
+            if config['createhardlink'] == u'true':
                 logging.info('Hardlink creation enabled, skipping cleanup.')
                 result['tasks']['cleanup'] = {'enabled': 'true', 'response': 'skipped'}
             else:
